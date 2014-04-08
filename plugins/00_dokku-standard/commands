@@ -63,6 +63,25 @@ case "$1" in
     DOCKER_ARGS=$(: | pluginhook docker-args $APP)
     docker run -i -t $DOCKER_ARGS $IMAGE /exec "$@"
     ;;
+    
+  ssh)
+    if [[ -z $2 ]]; then
+        echo "Please specify an app to run the command on"
+        exit 1
+    fi
+    APP="$2";
+    if [[ ! -d "$DOKKU_ROOT/$APP" ]]; then
+        echo "App $APP does not exist"
+        exit 1
+    fi
+
+    if [[ -f "$DOKKU_ROOT/$APP/CONTAINER" ]]; then
+      CONTAINER=$(<$DOKKU_ROOT/$APP/CONTAINER)
+      ssh root@`docker inspect $CONTAINER | grep IPAddress | cut -d '"' -f 4`
+    else
+      echo "Application's container not found"
+    fi
+    ;;
 
   url)
     APP="$2";

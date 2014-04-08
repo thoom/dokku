@@ -77,7 +77,7 @@ case "$1" in
 
     if [[ -f "$DOKKU_ROOT/$APP/CONTAINER" ]]; then
       CONTAINER=$(<$DOKKU_ROOT/$APP/CONTAINER)
-      ssh root@`docker inspect $CONTAINER | grep IPAddress | cut -d '"' -f 4`
+      ssh -t -i ~/.ssh/docker_key root@`docker inspect $CONTAINER | grep IPAddress | cut -d '"' -f 4`
     else
       echo "Application's container not found"
     fi
